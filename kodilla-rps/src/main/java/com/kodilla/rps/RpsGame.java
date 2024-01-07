@@ -1,5 +1,9 @@
 package com.kodilla.rps;
 
+import com.kodilla.rps.common.Dane;
+import com.kodilla.rps.common.DaneObsluga;
+import com.kodilla.rps.enums.UserChoice;
+
 import java.util.Random;
 import java.util.Scanner;
 
@@ -8,7 +12,6 @@ public class RpsGame {
     private final Scanner scanner = new Scanner(System.in);
     private final Random random = new Random();
     private String computerChoiceString;
-    String yesOrNot;
 
     private final RpsWelcomeScreen rpsWelcomeScreen = new RpsWelcomeScreen();
     private RpsResults rpsResults;
@@ -35,61 +38,46 @@ public class RpsGame {
             System.out.println("klawisz n - nowa gra\n");
 
             System.out.print("Wybierz swoj ruch: ");
-            String userChoice = scanner.nextLine();
+            String strUserChoice = scanner.nextLine();
+
+            int intValue;
+            try {
+                intValue = Integer.parseInt(strUserChoice);
+            } catch (Exception ex) {
+                intValue = UserChoice.fromString(strUserChoice);
+            }
+
+
+            UserChoice userChoice = UserChoice.fromInt(intValue);
 
             switch (userChoice) {
-                case "1":
-                    System.out.print("Wybrałeś kamień a ");
-                    computerMove();
-                    rpsResults.resultChoice(userChoice, computerChoiceString);
+                case KAMIEN:
+                    print("kamień");
+                    zrobRuch(strUserChoice);
                     break;
-                case "2":
-                    System.out.print("Wybrałeś jaszurkę a ");
-                    computerMove();
-                    rpsResults.resultChoice(userChoice, computerChoiceString);
+                case JASZCZURKA:
+                    print("jaszurkę");
+                    zrobRuch(strUserChoice);
                     break;
-                case "3":
-                    System.out.print("Wybrałeś Spocka a ");
-                    computerMove();
-                    rpsResults.resultChoice(userChoice, computerChoiceString);
+                case SPOCK:
+                    print("Spocka");
+                    zrobRuch(strUserChoice);
                     break;
-                case "4":
-                    System.out.print("Wybrałeś nożyce a ");
-                    computerMove();
-                    rpsResults.resultChoice(userChoice, computerChoiceString);
+                case NOZYCE:
+                    print("nożyce");
+                    zrobRuch(strUserChoice);
                     break;
-                case "5":
-                    System.out.print("Wybrałeś papier a ");
-                    computerMove();
-                    rpsResults.resultChoice(userChoice, computerChoiceString);
+                case PAPIER:
+                    print("papier");
+                    zrobRuch(strUserChoice);
                     break;
-                case "x":
+                case ZAKONCZ:
                     System.out.print("Czy napewno zakończyć grę t/n ");
-                    do {
-                        yesOrNot = scanner.nextLine();
-                        if (yesOrNot.equals("t")) {
-                            rpsResults.end = true;
-                        } else if (yesOrNot.equals("n")) {
-                            game();
-                        } else {
-                            System.out.print("t/n ? ");
-                        }
-                    } while (!yesOrNot.equals("t") && !yesOrNot.equals("n"));
+                    sprawdzZakonczenie();
                     break;
-                case "n":
+                case ZAKONCZIROZPOCZNIJ:
                     System.out.print("Czy napewno zakończyć aktualną grę i zacząć nową t/n ");
-                    do {
-                        yesOrNot = scanner.nextLine();
-                        if (yesOrNot.equals("t")) {
-                            rpsResults.setResultComputer(0);
-                            rpsResults.setResultUser(0);
-                            startGame();
-                        } else if (yesOrNot.equals("n")) {
-                            game();
-                        } else {
-                            System.out.print("t/n ? ");
-                        }
-                    } while (!yesOrNot.equals("t") && !yesOrNot.equals("n"));
+                    zakonczenieIRozpoczecie();
                     break;
                 default:
                     System.out.println("Niepoprawny wybór");
@@ -98,6 +86,41 @@ public class RpsGame {
             }
 
         }
+    }
+
+    private void zrobRuch(String strUserChoice) {
+        computerMove();
+        rpsResults.resultChoice(strUserChoice, computerChoiceString);
+    }
+
+    private void zakonczenieIRozpoczecie() {
+        String yesOrNot2;
+        do {
+            yesOrNot2 = scanner.nextLine();
+            if (yesOrNot2.equals("t")) {
+                rpsResults.setResultComputer(0);
+                rpsResults.setResultUser(0);
+                startGame();
+            } else if (yesOrNot2.equals("n")) {
+                game();
+            } else {
+                System.out.print("t/n ? ");
+            }
+        } while (!yesOrNot2.equals("t") && !yesOrNot2.equals("n"));
+    }
+
+    private void sprawdzZakonczenie() {
+        String yesOrNot;
+        do {
+            yesOrNot = scanner.nextLine();
+            if (yesOrNot.equals("t")) {
+                rpsResults.end = true;
+            } else if (yesOrNot.equals("n")) {
+                game();
+            } else {
+                System.out.print("t/n ? ");
+            }
+        } while (!yesOrNot.equals("t") && !yesOrNot.equals("n"));
     }
 
     public void computerMove() {
@@ -120,5 +143,9 @@ public class RpsGame {
                 break;
         }
         computerChoiceString = Integer.toString(computerChoice);
+    }
+
+    private void print(String wybor) {
+        System.out.print("Wybrałeś " + wybor + " a ");
     }
 }

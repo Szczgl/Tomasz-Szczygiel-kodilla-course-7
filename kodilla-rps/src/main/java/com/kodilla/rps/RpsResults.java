@@ -1,6 +1,11 @@
 package com.kodilla.rps;
 
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class RpsResults {
 
     private int resultUser;
@@ -9,9 +14,18 @@ public class RpsResults {
     private final int numberOfWin;
     public boolean end = false;
 
+    private Map<String, List<String>> wygrywajaceKombinacje = new HashMap<>();
+
+
     public RpsResults(final String userName, final int numberOfWin) {
         this.userName = userName;
         this.numberOfWin = numberOfWin;
+
+        wygrywajaceKombinacje.put("1", Arrays.asList("2", "4"));
+        wygrywajaceKombinacje.put("2", Arrays.asList("3", "5"));
+        wygrywajaceKombinacje.put("3", Arrays.asList("1", "4"));
+        wygrywajaceKombinacje.put("4", Arrays.asList("2", "5"));
+        wygrywajaceKombinacje.put("5", Arrays.asList("1", "3"));
     }
 
     public void setResultUser(int resultUser) {
@@ -24,13 +38,10 @@ public class RpsResults {
 
     public void resultChoice(String userChoice, String computerChoiceString) {
 
+        List<String> kombinacje = wygrywajaceKombinacje.get(userChoice);
         if (userChoice.equals(computerChoiceString)) {
             System.out.println("Remis");
-        } else if ((userChoice.equals("1") && ((computerChoiceString.equals("2") || computerChoiceString.equals("4"))))
-                || (userChoice.equals("2") && ((computerChoiceString.equals("3") || computerChoiceString.equals("5"))))
-                || (userChoice.equals("3") && ((computerChoiceString.equals("1") || computerChoiceString.equals("4"))))
-                || (userChoice.equals("4") && ((computerChoiceString.equals("2") || computerChoiceString.equals("5"))))
-                || (userChoice.equals("5") && ((computerChoiceString.equals("1") || computerChoiceString.equals("3"))))) {
+        } else if (kombinacje.contains(computerChoiceString)) {
             System.out.println(userName + " wygrywa rundę");
             resultUser++;
         } else {
@@ -49,4 +60,5 @@ public class RpsResults {
             end = true;
         }
     }
+
 }
